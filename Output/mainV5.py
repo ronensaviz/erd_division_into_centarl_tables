@@ -10,16 +10,16 @@ def parse_dot_content(content):
     }
 
 
-def create_graph(graph, table_names):
-    table_names_lower = [name.lower() for name in table_names]
-    graph_str = 'digraph FilteredGraph {\n  node [shape=record];\n'
+def create_graph(graph, table_name):
+    table_name_lower = table_name.lower()
+    graph_str = f'digraph {table_name} {{\n  node [shape=record];\n'
 
     for node, label in graph['nodes']:
-        if any(table_name in node.lower() for table_name in table_names_lower):
+        if table_name_lower in node.lower():
             graph_str += f'  {node}   [label = "{label}"];\n'
 
     for source, target, label, color in graph['connections']:
-        if any(table_name in source.lower() or table_name in target.lower() for table_name in table_names_lower):
+        if table_name_lower in source.lower() or table_name_lower in target.lower():
             corrected_label = label.replace('UNKNOWN', f'{source}_id (JOIN)')
             graph_str += f'  {source} -> {target} [label="{corrected_label}" color="{color}"];\n'
 
@@ -35,11 +35,11 @@ def main():
     with open(file_path, 'r') as file:
         content = file.read()
 
-    # Specify the table names to filter
-    table_names = ['transaction_payment_response', 'transaction_payment_response_status','debt','channel','transaction_type','transaction_provider','transaction_channel_type','offer_group_interval','campaign_run_debt','campaign_run','customer','payment_method']  # Add the table names you want to filter here
+    # Specify the table name to filter
+    table_name = 'נםםל'
 
     graph = parse_dot_content(content)
-    graph_str = create_graph(graph, table_names)
+    graph_str = create_graph(graph, table_name)
 
     # Print the output to the console
     print(graph_str)
